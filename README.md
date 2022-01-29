@@ -1,4 +1,9 @@
-A web server built using [Shelf](https://pub.dev/packages/shelf).
+# Servidor Web Simples feito em Dart.
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+Código fonte para estudo.
+
+### Links para estudo
+
+- [Shelf](https://pub.dev/packages/shelf)
+- [Shelf Static](https://pub.dev/packages/shelf_static)
+- [Shelf Router](https://pub.dev/packages/shelf_router)
