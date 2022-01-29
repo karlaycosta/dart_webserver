@@ -1,0 +1,18 @@
+name: dart_webserver
+description: A web server built using the shelf package.
+# version: 1.0.0
+# homepage: https://www.example.com
+
+environment:
+  sdk: '>=2.15.1 <3.0.0'
+
+dependencies:
+  shelf: ^1.2.0
+  shelf_static: ^1.1.0
+  shelf_router: ^1.1.2
+  http: ^0.13.4
+  shelf_cors_headers: ^0.1.2
+  sqflite_common_ffi: ^2.1.0+2
+
+dev_dependencies:
+  pedantic: ^1.9.0
