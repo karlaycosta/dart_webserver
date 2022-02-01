@@ -6,10 +6,12 @@ import 'package:shelf/shelf_io.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
-
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:path/path.dart' as path;
 import 'models/alimentos.dart';
 
 void main() async {
+
   const port = 8080;
   final ip = InternetAddress.anyIPv4;
 
@@ -19,9 +21,16 @@ void main() async {
 
   // INÍCIO DAS ROTAS
   final app = Router();
-  app.get('/alimentos', (Request request) {
+  app.get('/alimentos', (Request request) async {
     return Response.ok(
-      getAlimentos(),
+      await getAlimentos(),
+      headers: {'content-type': 'application/json'},
+    );
+  });
+
+  app.get('/alimentosfiltrados/<predicado>', (Request request, String predicado) async {
+    return Response.ok(
+      await getAlimentosFiltrados(predicado),
       headers: {'content-type': 'application/json'},
     );
   });
@@ -43,10 +52,20 @@ void main() async {
   print('Servidor rodando no $ip:$port');
 }
 
-String getAlimentos() {
-  return jsonEncode(<Alimento>[
-    Alimento(id: 1, categoria: 1, nome: 'Banana', criacao: DateTime.now()),
-    Alimento(id: 2, categoria: 1, nome: 'Maça', criacao: DateTime.now()),
-    Alimento(id: 2, categoria: 1, nome: 'Uva', criacao: DateTime.now()),
-  ]);
+Future<String> getAlimentos() async {
+  sqfliteFfiInit();
+  final caminho = path.join(path.current, 'evo.db');
+  final db = await databaseFactoryFfi.openDatabase(caminho);
+  final res = await db.rawQuery('select * from alimentos');
+  await db.close();
+  return jsonEncode(res);
+}
+
+Future<String> getAlimentosFiltrados(String predicado) async {
+  sqfliteFfiInit();
+  final caminho = path.join(path.current, 'evo.db');
+  final db = await databaseFactoryFfi.openDatabase(caminho);
+  final res = await db.rawQuery('''SELECT * FROM alimentos WHERE replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(alimentos.nome, 'á','a'), 'ã','a'), 'â','a'), 'é','e'), 'ê','e'), 'í','i'),'ó','o') ,'õ','o') ,'ô','o'),'ú','u'), 'ç','c') LIKE '%$predicado%';''');
+  await db.close();
+  return jsonEncode(res);
 }
